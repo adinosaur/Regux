@@ -6,6 +6,8 @@
 #include <assert.h>
 #include <iostream>
 
+const uint64_t ONE = 1;
+
 //
 // 友元函数，相等性判断
 //
@@ -31,23 +33,34 @@ MiniSet operator&(const MiniSet& s1, const MiniSet& s2) {
     return s;
 }
 
-MiniSet::MiniSet(): _set(0) {
+//
+// 集合左移
+//
+MiniSet operator<<(const MiniSet& s1, int i) {
+	MiniSet s;
+	if (i > 0) {
+		s._set <<= i;
+		assert(s._set > s1._set);
+	}
+	return s;
+}
 
+MiniSet::MiniSet(): _set(0) {
 }
 
 void MiniSet::insert(int v) {
     assert(v >= MiniSet::MIN && v <= MiniSet::MAX);
-    _set |= (1L << v);
+	_set |= (ONE << v);
 }
 
 void MiniSet::remove(int v) {
     assert(v >= MiniSet::MIN && v <= MiniSet::MAX);
-    _set &= !(1 << v);
+	_set &= !(ONE << v);
 }
 
 bool MiniSet::has(int v) {
     assert(v >= MiniSet::MIN && v <= MiniSet::MAX);
-    return _set & (1L << v);
+	return _set & (ONE << v);
 }
 
 bool MiniSet::empty() {
