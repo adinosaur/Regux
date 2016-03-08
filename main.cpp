@@ -19,6 +19,9 @@ int main()
 	NFA ba(&b, &a, 1);
 	NFA cd(&c, &d, 1);
 
-	assert(ba.match(buf1, buf1+2));
+    ba.print();
+    cd.print();
+
+	//assert(ba.match(buf1, buf1+2));
     return 0;
 }

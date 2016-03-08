@@ -42,9 +42,7 @@ NFA::NFA(NFA* n, int op) {
 
             for (int i = 0; i != n->statges_num; ++i)
                 for (int j = 0; j != ALPHA_SIZE; ++j)
-                    for (int k = SetType::MIN; k != SetType::MAX; ++k)
-                        if (n->move[i][j].has(k))
-                            move[i+1][j].insert(k+1);
+                    move[i+1][j] = n->move[i][j] << 1;
 
             move[n->statges_num][EPSILON].insert(1);
             move[n->statges_num][EPSILON].insert(n->statges_num + 1);
@@ -86,17 +84,13 @@ NFA::NFA(NFA* n1, NFA* n2, int op) {
 
             for (int i = 0; i != statges_num1; ++i)
                 for (int j = 0; j != ALPHA_SIZE; ++j)
-                    for (int k = SetType::MIN; k != SetType::MAX; ++k)
-                        if (n1->move[i][j].has(k))
-                            move[i+1][j].insert(k+1);
+                    move[i+1][j] = n1->move[i][j] << 1;
 
             move[statges_num1][EPSILON].insert(statges_num1 + statges_num2 + 1);
 
             for (int i = 0; i != statges_num2; ++i)
                 for (int j = 0; j != ALPHA_SIZE; ++j)
-                    for (int k = SetType::MIN; k != SetType::MAX; ++k)
-                        if (n1->move[i][j].has(k))
-                            move[i+statges_num1+1][j].insert(k + statges_num1 + 1);
+                    move[i+statges_num1+1][j] = n1->move[i][j] << (statges_num1 + 1);
 
             move[statges_num1 + statges_num2][EPSILON].insert(statges_num1 + statges_num2 + 1);
 
@@ -112,9 +106,7 @@ NFA::NFA(NFA* n1, NFA* n2, int op) {
 
             for (int i = 0; i != statges_num2; ++i)
                 for (int j = 0; j != ALPHA_SIZE; ++j)
-                    for (int k = SetType::MIN; k != SetType::MAX; ++k)
-                        if (n2->move[i][j].has(k))
-                            move[i+statges_num1-1][j].insert(k + statges_num2 - 1);
+                    move[i+statges_num1-1][j] = n2->move[i][j] << (statges_num2 - 1);
 
             break;
 
@@ -128,15 +120,11 @@ NFA::NFA(NFA* n1, NFA* n2, int op) {
 
             for (int i = 0; i != statges_num1; ++i)
                 for (int j = 0; j != ALPHA_SIZE; ++j)
-                    for (int k = SetType::MIN; k != SetType::MAX; ++k)
-                        if (n1->move[i][j].has(k))
-                            move[i+1][j].insert(k+1);
+                    move[i+1][j] = n1->move[i][j] << 1;
 
             for (int i = 0; i != statges_num2; ++i)
                 for (int j = 0; j != ALPHA_SIZE; ++j)
-                    for (int k = SetType::MIN; k != SetType::MAX; ++k)
-                        if (n2->move[i][j].has(k))
-                            move[i+statges_num1+1][j].insert(k + statges_num1 + 1);
+                    move[i+statges_num1+1][j] = n2->move[i][j] << (statges_num1 + 1);
             break;
     }
 }

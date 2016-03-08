@@ -37,12 +37,21 @@ MiniSet operator&(const MiniSet& s1, const MiniSet& s2) {
 // 集合左移
 //
 MiniSet operator<<(const MiniSet& s1, int i) {
-	MiniSet s;
-	if (i > 0) {
-		s._set <<= i;
-		assert(s._set > s1._set);
-	}
-	return s;
+	MiniSet s = s1;
+    s <<= i;
+    return s;
+}
+
+//
+// 重载<<=
+//
+MiniSet& MiniSet::operator<<=(int i) {
+    uint64_t s = _set;
+    if (i > 0 && _set) {
+        _set <<= i;
+        assert(_set > s);
+    }
+    return *this;
 }
 
 MiniSet::MiniSet(): _set(0) {

@@ -14,11 +14,14 @@ public:
     static const int MAX = 63;
     static const int MIN = 0;
 
-    // 友元
+    // 友元重载
     friend bool operator==(const MiniSet& s1, const MiniSet& s2);
     friend MiniSet operator|(const MiniSet& s1, const MiniSet& s2);
     friend MiniSet operator&(const MiniSet& s1, const MiniSet& s2);
 	friend MiniSet operator<<(const MiniSet& s1, int i);
+
+    // 成员重载
+    MiniSet& operator<<=(int i);
 
     MiniSet();
 
