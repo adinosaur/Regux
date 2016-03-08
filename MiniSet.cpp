@@ -37,7 +37,7 @@ MiniSet operator&(const MiniSet& s1, const MiniSet& s2) {
 // 集合左移
 //
 MiniSet operator<<(const MiniSet& s1, int i) {
-	MiniSet s = s1;
+    MiniSet s = s1;
     s <<= i;
     return s;
 }
@@ -59,17 +59,17 @@ MiniSet::MiniSet(): _set(0) {
 
 void MiniSet::insert(int v) {
     assert(v >= MiniSet::MIN && v <= MiniSet::MAX);
-	_set |= (ONE << v);
+    _set |= (ONE << v);
 }
 
 void MiniSet::remove(int v) {
     assert(v >= MiniSet::MIN && v <= MiniSet::MAX);
-	_set &= !(ONE << v);
+    _set &= !(ONE << v);
 }
 
 bool MiniSet::has(int v) {
     assert(v >= MiniSet::MIN && v <= MiniSet::MAX);
-	return _set & (ONE << v);
+    return _set & (ONE << v);
 }
 
 bool MiniSet::empty() {

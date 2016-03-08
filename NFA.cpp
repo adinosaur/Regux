@@ -207,9 +207,9 @@ bool NFA::match(char* b, char* e) {
 
 void NFA::print() {
     for (int i = 0; i != statges_num; ++i) {
-		std::cout << i << ": ";
+        std::cout << i << ": ";
         for (int j = 0; j != ALPHA_SIZE; ++j) {
-			move[i][j].print();
+            move[i][j].print();
         }
         std::cout << std::endl;
     }
