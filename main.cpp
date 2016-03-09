@@ -8,22 +8,8 @@ using namespace std;
 
 int main()
 {
-    char buf1[] = "ab";
-    char buf2[] = "cd";
-
-    NFA a('a');
-    NFA b('b');
-    NFA c('c');
-    NFA d('d');
-
-    NFA ab(&a, &b, 1);
-    NFA cd(&c, &d, 1);
-
-    assert(cd.match(buf2, buf2+2));
-
-    NFA ab_cd(&ab, &cd, 0);
-
-    ab_cd.print();
-    assert(ab_cd.match(buf2, buf2+2));
+    char buf3[] = "(a|b)*&b";
+    Translate translate(buf3, buf3 + 8); 
+    translate.expr1();
     return 0;
 }
