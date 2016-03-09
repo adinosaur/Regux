@@ -56,10 +56,17 @@ void Translate::expr3() {
 // 匹配字符或数字
 //
 void Translate::term() {
-    if (isdigit(*lookahead) || isalpha(*lookahead)) {
+	if (*lookahead == '(') {
+		match('(');
+		expr1();
+		match(')');
+	}
+    else if (isdigit(*lookahead) || isalpha(*lookahead)) {
         do_somethong(*lookahead);
         match(*lookahead);
     }
+	else {
+	}
 }
 
 //

@@ -8,9 +8,10 @@ using namespace std;
 
 int main()
 {
+	/*
     char buf1[] = "ab";
     char buf2[] = "cd";
-
+	
     NFA a('a');
     NFA b('b');
     NFA c('c');
@@ -21,7 +22,10 @@ int main()
 
     ba.print();
     cd.print();
+	*/
 
-    //assert(ba.match(buf1, buf1+2));
+	char buf3[] = "(a|b)*&b";
+	Translate translate(buf3, buf3 + 8); 
+	translate.expr1();
     return 0;
 }

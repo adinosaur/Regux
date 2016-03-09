@@ -11,10 +11,10 @@ ExprParser::ExprParser(char* b, char* e):
         lookahead(b) { }
 
 void ExprParser::match(char t) {
-    if (*lookahead == t && lookahead < end)
-        lookahead++;
-    else
-        std::cout << "语法错误!" << std::endl;
+	if (*lookahead == t && lookahead < end)
+		lookahead++;
+	else
+		std::cout << "syntax error!: expect '" << t << "' but input is '" << *lookahead << "'" << std::endl;
 }
 
 void ExprParser::print(char c) {
