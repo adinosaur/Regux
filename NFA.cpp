@@ -90,7 +90,7 @@ NFA::NFA(NFA* n1, NFA* n2, int op) {
 
             for (int i = 0; i != statges_num2; ++i)
                 for (int j = 0; j != ALPHA_SIZE; ++j)
-                    move[i+statges_num1+1][j] = n1->move[i][j] << (statges_num1 + 1);
+                    move[i+statges_num1+1][j] = n2->move[i][j] << (statges_num1 + 1);
 
             move[statges_num1 + statges_num2][EPSILON].insert(statges_num1 + statges_num2 + 1);
 
@@ -166,7 +166,6 @@ NFA::SetType NFA::epsilon_closure(SetType set) {
                 statges_stack.push(u);
             }
     }
-
     return final_set;
 }
 

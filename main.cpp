@@ -16,12 +16,14 @@ int main()
     NFA c('c');
     NFA d('d');
 
-    NFA ba(&b, &a, 1);
+    NFA ab(&a, &b, 1);
     NFA cd(&c, &d, 1);
 
-    ba.print();
-    cd.print();
+    assert(cd.match(buf2, buf2+2));
 
-    //assert(ba.match(buf1, buf1+2));
+    NFA ab_cd(&ab, &cd, 0);
+
+    ab_cd.print();
+    assert(ab_cd.match(buf2, buf2+2));
     return 0;
 }
