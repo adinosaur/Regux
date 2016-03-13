@@ -16,6 +16,13 @@ bool operator==(const MiniSet& s1, const MiniSet& s2) {
 }
 
 //
+// 友元函数，不等性判断
+//
+bool operator!=(const MiniSet& s1, const MiniSet& s2) {
+    return !(s1 == s2);
+}
+
+//
 // 友元函数，集合求并
 //
 MiniSet operator|(const MiniSet& s1, const MiniSet& s2) {

@@ -16,6 +16,7 @@ public:
 
     // 友元重载
     friend bool operator==(const MiniSet& s1, const MiniSet& s2);
+    friend bool operator!=(const MiniSet& s1, const MiniSet& s2);
     friend MiniSet operator|(const MiniSet& s1, const MiniSet& s2);
     friend MiniSet operator&(const MiniSet& s1, const MiniSet& s2);
     friend MiniSet operator<<(const MiniSet& s1, int i);
