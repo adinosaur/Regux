@@ -8,15 +8,15 @@
 
 class ExprParser {
 public:
-    ExprParser(char* b, char* e);
+    ExprParser(const char* b, const char* e);
 
 protected:
     void match(char t);
     void print(char c);
 
-    char* beg;
-    char* end;
-    char* lookahead;
+    const char* beg;
+    const char* end;
+    const char* lookahead;
 };
 
 

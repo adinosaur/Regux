@@ -8,70 +8,85 @@
 //
 // 识别正则表达式: 或操作
 //
-void Translate::expr1() {
-    expr2();
+NFAProxy Translate::expr1() {
+    NFAProxy n1 = expr2();
     while (true) {
         if (*lookahead == '|') {
             match('|');
-            expr2();
+            NFAProxy n2 = expr2();
+            n1 = NFAProxy(n1, n2, NFA_OP_OR);
             do_somethong('|');
             continue;
         }
         break;
     }
+    return n1;
 }
 
 //
 // 识别正则表达式: 与操作
 //
-void Translate::expr2() {
-    expr3();
+NFAProxy Translate::expr2() {
+    NFAProxy n1 = expr3();
     while (true) {
-        if (*lookahead == '&') {
-            match('&');
-            expr3();
-            do_somethong('&');
+        // 为了支持省略正则连接操作，此处做特殊处理
+        // 不符合预测分析文法
+        if (is_terminal_flag(*lookahead)) {
+            NFAProxy n2 = expr3();
+            n1 = NFAProxy(n1, n2, NFA_OP_AND);
             continue;
         }
         break;
     }
+    return n1;
 }
 
 //
 // 识别正则表达式: 克莱因闭包
 //
-void Translate::expr3() {
-    term();
+NFAProxy Translate::expr3() {
+    NFAProxy n = term();
     while (true) {
         if (*lookahead == '*') {
             match('*');
             do_somethong('*');
+            n = NFAProxy(n, NFA_OP_KLEENE);
             continue;
         }
         break;
     }
+    return n;
 }
 
 //
-// 匹配字符或数字
+// 匹配字符或数字,或者识别出括号表达式
 //
-void Translate::term() {
+NFAProxy Translate::term() {
 	if (*lookahead == '(') {
 		match('(');
-		expr1();
+        NFAProxy n = expr1();
 		match(')');
+        return n;
 	}
-    else if (isdigit(*lookahead) || isalpha(*lookahead)) {
+
+    if (isdigit(*lookahead) || isalpha(*lookahead)) {
         do_somethong(*lookahead);
+        NFAProxy n(*lookahead);
         match(*lookahead);
+        return n;
     }
-	else {
-	}
 }
 
 //
 // 语义动作
 //
 void Translate::do_somethong(char c) {
-    print(c);
+//    print(c);
+}
+
+//
+// 判断字符是否可以终止
+//
+bool Translate::is_terminal_flag(char c) {
+    return c == '(' || isdigit(c) || isalpha(c);
 }

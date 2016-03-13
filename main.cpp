@@ -1,15 +1,17 @@
-#include "Translate.h"
-#include "MiniSet.h"
-#include "NFA.h"
+#include "Regux.h"
 #include <iostream>
+#include <string>
 #include <assert.h>
 
 using namespace std;
 
 int main()
 {
-    char buf3[] = "(a|b)*&b";
-    Translate translate(buf3, buf3 + 8); 
-    translate.expr1();
+    string s1 = "caacd";
+    string s2 = "(a|b)*cd";
+
+    Regux re(s2);
+    assert(re.match(s1));
+
     return 0;
 }

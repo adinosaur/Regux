@@ -5,7 +5,7 @@
 #include "ExprParser.h"
 #include <iostream>
 
-ExprParser::ExprParser(char* b, char* e):
+ExprParser::ExprParser(const char* b, const char* e):
         beg(b),
         end(e),
         lookahead(b) { }

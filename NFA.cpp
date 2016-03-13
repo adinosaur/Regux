@@ -7,42 +7,83 @@
 #include <iostream>
 
 //
+// 友元函数
+//
+NFA operator+(const NFA& n1, const NFA& n2)
+{
+    NFA n;
+    n.statges_num = n1.statges_num + n2.statges_num + 1;
+    n.init();
+
+    // 终结状态
+    n.final_statges.insert(n1.statges_num);
+    n.final_statges.insert(n1.statges_num + n2.statges_num);
+    // 转移表
+    n.move[0][EPSILON].insert(1);
+    n.move[0][EPSILON].insert(n1.statges_num + 1);
+
+    for (int i = 0; i != n1.statges_num; ++i)
+        for (auto it : n1.move[i])
+            n.move[i+1][it.first] = it.second << 1;
+
+    for (int i = 0; i != n2.statges_num; ++i)
+        for (auto it : n2.move[i])
+            n.move[i+n1.statges_num+1][it.first] = it.second << (n1.statges_num + 1);
+
+    return n;
+}
+
+//
+// 默认构造函数
+//
+NFA::NFA():
+        statges_num(0),
+        _reference_count(1),
+        final_statges(),
+        move()
+{
+
+}
+
+//
 // 单个字符的NFA
 //
-NFA::NFA(char input) {
-    statges_num = 2;
+NFA::NFA(char input):
+        statges_num(2),
+        _reference_count(1),
+        final_statges(),
+        move()
+{
     final_statges.insert(statges_num - 1);
-
-    // 申请内存
-    move = new SetType*[statges_num];
-    for (int i = 0; i != statges_num; ++i)
-        move[i] = new SetType[ALPHA_SIZE];
-
+    init();
+    move[0][input] = SetType();
     move[0][input].insert(1);
 }
 
 //
 // NFA克林闭包
 //
-NFA::NFA(NFA* n, int op) {
+NFA::NFA(NFA* n, int op):
+        statges_num(n->statges_num + 2),
+        _reference_count(1),
+        final_statges(),
+        move()
+{
     switch (op) {
         case NFA_OP_KLEENE:
-            statges_num = n->statges_num + 2;
             // 终结状态集合
             final_statges.insert(statges_num - 1);
 
-            // 申请内存
-            move = new SetType*[statges_num];
-            for (int i = 0; i != statges_num; ++i)
-                move[i] = new SetType[ALPHA_SIZE];
+            init();
 
             // 转移表
+            move[0][EPSILON] = SetType();
             move[0][EPSILON].insert(1);
             move[0][EPSILON].insert(n->statges_num + 1);
 
             for (int i = 0; i != n->statges_num; ++i)
-                for (int j = 0; j != ALPHA_SIZE; ++j)
-                    move[i+1][j] = n->move[i][j] << 1;
+                for (auto it : n->move[i])
+                    move[i+1][it.first] = it.second << 1;
 
             move[n->statges_num][EPSILON].insert(1);
             move[n->statges_num][EPSILON].insert(n->statges_num + 1);
@@ -54,7 +95,12 @@ NFA::NFA(NFA* n, int op) {
 //
 // NFA连接和或操作
 //
-NFA::NFA(NFA* n1, NFA* n2, int op) {
+NFA::NFA(NFA* n1, NFA* n2, int op):
+        statges_num(0),
+        _reference_count(1),
+        final_statges(),
+        move()
+{
     int statges_num1 = n1->statges_num;
     int statges_num2 = n2->statges_num;
 
@@ -65,14 +111,9 @@ NFA::NFA(NFA* n1, NFA* n2, int op) {
         case NFA_OP_AND:
             statges_num = n1->statges_num + n2->statges_num - 1;
             break;
-        case NFA_OP_MEGRE:
-            statges_num = n1->statges_num + n2->statges_num + 1;
     }
 
-    // 申请内存
-    move = new SetType*[statges_num];
-    for (int i = 0; i != statges_num; ++i)
-        move[i] = new SetType[ALPHA_SIZE];
+    init();
 
     switch (op) {
         case NFA_OP_OR:
@@ -83,14 +124,14 @@ NFA::NFA(NFA* n1, NFA* n2, int op) {
             move[0][EPSILON].insert(statges_num1 + 1);
 
             for (int i = 0; i != statges_num1; ++i)
-                for (int j = 0; j != ALPHA_SIZE; ++j)
-                    move[i+1][j] = n1->move[i][j] << 1;
+                for (auto it : n1->move[i])
+                    move[i+1][it.first] = it.second << 1;
 
             move[statges_num1][EPSILON].insert(statges_num1 + statges_num2 + 1);
 
             for (int i = 0; i != statges_num2; ++i)
-                for (int j = 0; j != ALPHA_SIZE; ++j)
-                    move[i+statges_num1+1][j] = n2->move[i][j] << (statges_num1 + 1);
+                for (auto it : n2->move[i])
+                    move[i+statges_num1+1][it.first] = it.second << (statges_num1 + 1);
 
             move[statges_num1 + statges_num2][EPSILON].insert(statges_num1 + statges_num2 + 1);
 
@@ -101,38 +142,23 @@ NFA::NFA(NFA* n1, NFA* n2, int op) {
             final_statges.insert(statges_num - 1);
             // 转移表
             for (int i = 0; i != statges_num1; ++i)
-                for (int j = 0; j != ALPHA_SIZE; ++j)
-                    move[i][j] = n1->move[i][j];
+                for (auto it : n1->move[i])
+                    move[i][it.first] = it.second;
 
             for (int i = 0; i != statges_num2; ++i)
-                for (int j = 0; j != ALPHA_SIZE; ++j)
-                    move[i+statges_num1-1][j] = n2->move[i][j] << (statges_num2 - 1);
+                for (auto it : n2->move[i])
+                    move[i+statges_num1-1][it.first] = it.second << (statges_num1 - 1);
 
-            break;
-
-        case NFA_OP_MEGRE:
-            // 终结状态
-            final_statges.insert(statges_num1);
-            final_statges.insert(statges_num1 + statges_num2);
-            // 转移表
-            move[0][EPSILON].insert(1);
-            move[0][EPSILON].insert(statges_num1 + 1);
-
-            for (int i = 0; i != statges_num1; ++i)
-                for (int j = 0; j != ALPHA_SIZE; ++j)
-                    move[i+1][j] = n1->move[i][j] << 1;
-
-            for (int i = 0; i != statges_num2; ++i)
-                for (int j = 0; j != ALPHA_SIZE; ++j)
-                    move[i+statges_num1+1][j] = n2->move[i][j] << (statges_num1 + 1);
             break;
     }
 }
 
-NFA::~NFA() {
+//
+// 初始化
+//
+void NFA::init() {
     for (int i = 0; i != statges_num; ++i)
-        delete[] move[i];
-    delete[] move;
+        move.push_back(HashMap());
 }
 
 //
@@ -191,11 +217,10 @@ NFA::SetType NFA::moveto(SetType s, char c) {
 //
 // 匹配字符串
 //
-bool NFA::match(char* b, char* e) {
+bool NFA::match(const char* b, const char* e) {
     SetType set = epsilon_closure(0);
-    char* cp = b;
-    while (cp != e) {
-        SetType s = moveto(set, *cp);
+    const char* cp = b;
+    while (cp < e) {
         set = epsilon_closure(moveto(set, *cp));
         cp++;
     }
@@ -207,8 +232,10 @@ bool NFA::match(char* b, char* e) {
 void NFA::print() {
     for (int i = 0; i != statges_num; ++i) {
         std::cout << i << ": ";
-        for (int j = 0; j != ALPHA_SIZE; ++j) {
-            move[i][j].print();
+        for (auto it : move[i]) {
+            std::cout << "(" << it.first << "->";
+            it.second.print();
+            std::cout << ")";
         }
         std::cout << std::endl;
     }

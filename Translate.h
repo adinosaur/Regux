@@ -6,19 +6,23 @@
 #define REGUX_TRANSLATE_H
 
 #include "ExprParser.h"
+#include "NFAProxy.h"
 
 class Translate : public ExprParser
 {
 public:
-    Translate(char* b, char* e):
+    Translate(const char* b, const char* e):
             ExprParser(b, e) { }
 
-    void expr1();
-    void expr2();
-    void expr3();
-    void term();
+    NFAProxy expr1();
+
+private:
+    NFAProxy expr2();
+    NFAProxy expr3();
+    NFAProxy term();
 
     void do_somethong(char c);
+    bool is_terminal_flag(char c);
 };
 
 #endif
