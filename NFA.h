@@ -45,7 +45,6 @@ private:
     int statges_num;
     SetType final_statges;
     std::vector<HashMap> move;
-    //SetType** move;
 };
 
 
