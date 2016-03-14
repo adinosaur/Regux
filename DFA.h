@@ -22,10 +22,10 @@ private:
 
     // 子集构造法
     void subset_construction(NFA& nfa);
-    typedef std::unordered_map<int, MiniSet> HashMap;
+    typedef std::unordered_map<int, int> HashMap;
 
-    MiniSet final_statge;
-    std::vector<HashMap> move;
+    //MiniSet final_statge;
+    std::unordered_map<int, HashMap> move;
 };
 
 

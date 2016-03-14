@@ -8,15 +8,18 @@
 
 #include <sys/types.h>
 #include <stdint.h>
+#include <functional>
 
 class MiniSet {
 public:
+
     static const int MAX = 63;
     static const int MIN = 0;
 
     // 友元重载
     friend bool operator==(const MiniSet& s1, const MiniSet& s2);
     friend bool operator!=(const MiniSet& s1, const MiniSet& s2);
+    friend bool operator<(const MiniSet& s1, const MiniSet& s2);
     friend MiniSet operator|(const MiniSet& s1, const MiniSet& s2);
     friend MiniSet operator&(const MiniSet& s1, const MiniSet& s2);
     friend MiniSet operator<<(const MiniSet& s1, int i);

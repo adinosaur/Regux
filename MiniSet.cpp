@@ -23,6 +23,13 @@ bool operator!=(const MiniSet& s1, const MiniSet& s2) {
 }
 
 //
+// 友元函数，小于性判断
+//
+bool operator<(const MiniSet& s1, const MiniSet& s2) {
+    return s1._set < s2._set;
+}
+
+//
 // 友元函数，集合求并
 //
 MiniSet operator|(const MiniSet& s1, const MiniSet& s2) {

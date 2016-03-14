@@ -4,8 +4,8 @@
 
 #include "DFA.h"
 #include "NFA.h"
-#include "MiniSet.h"
-#include <unordered_set>
+
+#include <map>
 #include <queue>
 #include <iostream>
 
@@ -13,39 +13,45 @@ DFA::DFA(NFA& nfa) {
     subset_construction(nfa);
 }
 
+//
+// 子集构造法
+//
 void DFA::subset_construction(NFA& nfa) {
-    std::unordered_set<MiniSet> Dstates;
+    int s = 0;
+    std::map<MiniSet, int> Dstates;
     std::queue<MiniSet> Queue;
 
     MiniSet A = nfa.epsilon_closure(0);
-    Dstates.insert(A);
+    Dstates[A] = s++;
     Queue.push(A);
 
     while (!Queue.empty()) {
         MiniSet T = Queue.front();
         Queue.pop();
 
-        move.push_back(HashMap());
+        move[Dstates[T]] = HashMap();
 
         for (int i = 0; i != ALPHA_SIZE; ++i) {
             MiniSet U = nfa.epsilon_closure(nfa.moveto(T, i));
-            std::unordered_set<MiniSet>::iterator end = Dstates.end();
-            if (Dstates.find(U) != end) {
-                Dstates.insert(U);
+            if (U.empty())
+                continue;
+
+            std::map<MiniSet,int>::iterator end = Dstates.end();
+            if (Dstates.find(U) == end) {
+                Dstates[U] = s++;
                 Queue.push(U);
             }
-
-            move.back()[i] = U;
+            move[Dstates[T]][i] = Dstates[U];
         }
     }
 }
 
 void DFA::print() {
-    for (int i = 0; i != move.size(); ++i) {
-        std::cout << i << ": ";
-        for (auto it : move[i]) {
+    for (auto i : move) {
+        std::cout << i.first << ": ";
+        for (auto it : i.second) {
             std::cout << "(" << it.first << "->";
-            it.second.print();
+            std::cout << it.second;
             std::cout << ")";
         }
         std::cout << std::endl;
