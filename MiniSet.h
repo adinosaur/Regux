@@ -10,11 +10,17 @@
 #include <stdint.h>
 #include <functional>
 
+//
+// 适用于存放自动机状态的集合
+// 目前集合仅支持插入64个元素
+//
 class MiniSet {
 public:
 
     static const int MAX = 63;
     static const int MIN = 0;
+	// 友元类
+	friend class hash_miniset;
 
     // 友元重载
     friend bool operator==(const MiniSet& s1, const MiniSet& s2);
@@ -41,5 +47,15 @@ private:
     uint64_t _set;
 };
 
+//
+// MiniSet类的Hash函数对象
+//
+struct hash_miniset {
+	size_t operator()(const MiniSet& s) {
+		// 这里有可能存在截断问题
+		const unsigned long* p = reinterpret_cast<const unsigned long*>(&s._set);
+		return std::hash<unsigned long>()(*p);
+	}
+};
 
 #endif //REGUX_MINISET_H
