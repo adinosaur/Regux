@@ -5,9 +5,9 @@
 #ifndef REGUX_DFA_H
 #define REGUX_DFA_H
 
+#include "MiniSet.h"
 #include <unordered_map>
 #include <vector>
-#include "MiniSet.h"
 
 class NFA;
 
@@ -25,7 +25,7 @@ private:
     typedef std::unordered_map<int, int> HashMap;
 
     //MiniSet final_statge;
-    std::unordered_map<int, HashMap> move;
+    std::vector<HashMap> move;
 };
 
 
