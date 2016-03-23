@@ -6,6 +6,13 @@
 #include <stack>
 #include <iostream>
 
+// 静态成员定义
+const int NFA_Const_Define::NFA_OP_OR = 0;
+const int NFA_Const_Define::NFA_OP_AND = 1;
+const int NFA_Const_Define::NFA_OP_KLEENE = 2;
+const int NFA_Const_Define::EPSILON = 256;
+const int NFA_Const_Define::ALPHA_SIZE = 257;
+
 //
 // 友元函数
 //
@@ -19,8 +26,8 @@ NFA operator+(const NFA& n1, const NFA& n2)
     n.final_statges.insert(n1.statges_num);
     n.final_statges.insert(n1.statges_num + n2.statges_num);
     // 转移表
-    n.move[0][EPSILON].insert(1);
-    n.move[0][EPSILON].insert(n1.statges_num + 1);
+    n.move[0][NFA::EPSILON].insert(1);
+    n.move[0][NFA::EPSILON].insert(n1.statges_num + 1);
 
     for (int i = 0; i != n1.statges_num; ++i)
         for (auto it : n1.move[i])
@@ -38,7 +45,6 @@ NFA operator+(const NFA& n1, const NFA& n2)
 //
 NFA::NFA():
         statges_num(0),
-        _reference_count(1),
         final_statges(),
         move()
 {
@@ -50,7 +56,6 @@ NFA::NFA():
 //
 NFA::NFA(char input):
         statges_num(2),
-        _reference_count(1),
         final_statges(),
         move()
 {
@@ -65,7 +70,6 @@ NFA::NFA(char input):
 //
 NFA::NFA(NFA* n, int op):
         statges_num(n->statges_num + 2),
-        _reference_count(1),
         final_statges(),
         move()
 {
@@ -97,7 +101,6 @@ NFA::NFA(NFA* n, int op):
 //
 NFA::NFA(NFA* n1, NFA* n2, int op):
         statges_num(0),
-        _reference_count(1),
         final_statges(),
         move()
 {

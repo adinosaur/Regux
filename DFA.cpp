@@ -31,7 +31,7 @@ void DFA::subset_construction(NFA& nfa) {
 
         move[Dstates[T]] = HashMap();
 
-        for (int i = 0; i != ALPHA_SIZE; ++i) {
+        for (int i = 0; i != NFA::ALPHA_SIZE; ++i) {
             MiniSet U = nfa.epsilon_closure(nfa.moveto(T, i));
             if (U.empty())
                 continue;

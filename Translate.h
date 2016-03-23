@@ -21,7 +21,8 @@ private:
     NFAProxy expr3();
     NFAProxy term();
 
-    void do_somethong(char c);
+    // 语义动作
+    NFAProxy do_somethong(char c, NFAProxy n1, NFAProxy n2);
     bool is_terminal_flag(char c);
 };
 

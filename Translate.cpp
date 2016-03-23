@@ -3,6 +3,7 @@
 //
 
 #include "Translate.h"
+#include <assert.h>
 #include <ctype.h>
 
 //
@@ -14,8 +15,7 @@ NFAProxy Translate::expr1() {
         if (*lookahead == '|') {
             match('|');
             NFAProxy n2 = expr2();
-            n1 = NFAProxy(n1, n2, NFA_OP_OR);
-            do_somethong('|');
+            n1 = do_somethong('|', n1, n2);
             continue;
         }
         break;
@@ -33,7 +33,7 @@ NFAProxy Translate::expr2() {
         // 不符合预测分析文法
         if (is_terminal_flag(*lookahead)) {
             NFAProxy n2 = expr3();
-            n1 = NFAProxy(n1, n2, NFA_OP_AND);
+            n1 = do_somethong('&', n1, n2);
             continue;
         }
         break;
@@ -49,8 +49,7 @@ NFAProxy Translate::expr3() {
     while (true) {
         if (*lookahead == '*') {
             match('*');
-            do_somethong('*');
-            n = NFAProxy(n, NFA_OP_KLEENE);
+            n = do_somethong('*', n, NFAProxy());
             continue;
         }
         break;
@@ -62,16 +61,15 @@ NFAProxy Translate::expr3() {
 // 匹配字符或数字,或者识别出括号表达式
 //
 NFAProxy Translate::term() {
-	if (*lookahead == '(') {
-		match('(');
+    if (*lookahead == '(') {
+        match('(');
         NFAProxy n = expr1();
-		match(')');
+        match(')');
         return n;
-	}
+    }
 
     if (isdigit(*lookahead) || isalpha(*lookahead)) {
-        do_somethong(*lookahead);
-        NFAProxy n(*lookahead);
+        NFAProxy n = do_somethong(*lookahead, NFAProxy(), NFAProxy());
         match(*lookahead);
         return n;
     }
@@ -80,8 +78,36 @@ NFAProxy Translate::term() {
 //
 // 语义动作
 //
-void Translate::do_somethong(char c) {
-//    print(c);
+NFAProxy Translate::do_somethong(char c, NFAProxy n1, NFAProxy n2) {
+    print(c);
+    NFAProxy n;
+    switch (c) {
+        // 或操作
+        case '|':
+            assert(n1 != NFAProxy_None);
+            assert(n2 != NFAProxy_None);
+            n = NFAProxy(n1, n2, NFAProxy::NFA_OP_OR);
+            break;
+        // 与操作
+        case '&':
+            assert(n1 != NFAProxy_None);
+            assert(n2 != NFAProxy_None);
+            n = NFAProxy(n1, n2, NFAProxy::NFA_OP_AND);
+            break;
+        // 克林闭包
+        case '*':
+            assert(n1 != NFAProxy_None);
+            assert(n2 == NFAProxy_None);
+            n = NFAProxy(n1, NFAProxy::NFA_OP_KLEENE);
+            break;
+        // 终结节点
+        default:
+            assert(n1 == NFAProxy_None);
+            assert(n2 == NFAProxy_None);
+            n = NFAProxy(c);
+            break;
+    }
+    return n;
 }
 
 //
