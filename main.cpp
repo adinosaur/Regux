@@ -1,7 +1,4 @@
 #include "Regux.h"
-#include "DFA.h"
-#include <iostream>
-#include <string>
 #include <assert.h>
 
 using namespace std;

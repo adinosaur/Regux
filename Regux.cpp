@@ -3,15 +3,13 @@
 //
 
 #include "Regux.h"
-#include "Translate.h"
-#include <string>
 
 Regux::Regux(const std::string& str):
         Regux(str.c_str(), str.c_str() + str.size()) {
 }
 
 Regux::Regux(const char* b, const char* e) {
-    Translate translate(b, e);
+    Translate<NFAAction> translate(b, e);
     _nfa = translate.expr1();
 }
 
